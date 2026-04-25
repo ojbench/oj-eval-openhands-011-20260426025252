@@ -285,6 +285,18 @@ public:
 	void merge(priority_queue &other) {
         if (this == &other) return;
         
+        // If other is empty, nothing to merge
+        if (other.empty()) return;
+        
+        // If this is empty, just take other's data
+        if (empty()) {
+            root = other.root;
+            count = other.count;
+            other.root = nullptr;
+            other.count = 0;
+            return;
+        }
+        
         // Save current state in case of exception
         Node* old_root = root;
         size_t old_count = count;
