@@ -33,6 +33,7 @@ private:
 
     // Helper function to merge two heaps
     Node* merge_nodes(Node* h1, Node* h2) {
+        // Handle null cases
         if (!h1) return h2;
         if (!h2) return h1;
 
@@ -61,10 +62,18 @@ private:
 
         // Swap children if needed to maintain leftist property
         try {
-            if (!h1->left || (merged_right && h1->left->dist < merged_right->dist)) {
+            if (!h1->left) {
+                // If no left child, make merged_right the left child
+                h1->left = merged_right;
+            } else if (!merged_right) {
+                // If no merged_right, keep left child as is
+                h1->right = merged_right;
+            } else if (h1->left->dist < merged_right->dist) {
+                // If left child has smaller dist, swap
                 h1->right = h1->left;
                 h1->left = merged_right;
             } else {
+                // Otherwise, keep left child and set merged_right as right
                 h1->right = merged_right;
             }
         } catch (...) {
@@ -241,7 +250,10 @@ public:
             count--;
         } catch (...) {
             // Restore the original root if merge fails
+            // But don't restore children since they might have been modified
             root = old_root;
+            root->left = left_subtree;
+            root->right = right_subtree;
             throw;
         }
         
